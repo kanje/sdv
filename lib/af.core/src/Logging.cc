@@ -1,9 +1,12 @@
+// SDV Ecosystem Playground
+// Copyright (c) 2024 Antons Jeļkins
+
 module;
 
 #include <format>
 #include <iostream>
 
-export module sdv.af;
+export module sdv.af:Logging;
 
 export namespace sdv::af {
 
