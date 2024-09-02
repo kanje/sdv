@@ -1,0 +1,38 @@
+---
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: Latest
+
+AccessModifierOffset: -4
+IndentWidth: 4
+AlignOperands: AlignAfterOperator
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterFunction: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  SplitEmptyFunction: false
+ColumnLimit: 100
+BreakConstructorInitializers: BeforeComma
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^".*'
+    Priority:        10
+  - Regex:           '^<boost/.*'
+    Priority:        20
+  - Regex:           '^<[[:alnum:]_]+\.h'
+    Priority:        30
+  - Regex:           '^.*\/.*'
+    Priority:        40
+  - Regex:           '.*'
+    Priority:        50
+InsertNewlineAtEOF: true
+LineEnding: LF
+QualifierAlignment: Custom
+QualifierOrder: [friend, inline, static, constexpr, type, const, volatile]
+SpaceAfterTemplateKeyword: false
+...
