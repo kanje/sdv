@@ -16,23 +16,24 @@ export class Executor;
 
 namespace detail {
 
-class BaseExecutor {
+class BaseExecutor : boost::noncopyable {
 public:
   virtual ~BaseExecutor() = default;
   virtual void post(Work work) noexcept = 0;
 };
 
-class BaseEngine {
+class BaseEngine : boost::noncopyable {
 public:
-  virtual std::unique_ptr<BaseExecutor> executor() noexcept = 0;
+  virtual ~BaseEngine() = default;
+  virtual auto executor() noexcept -> std::unique_ptr<BaseExecutor> = 0;
 };
 
 } // namespace detail
 
 class Executor final : boost::noncopyable {
 public:
-  static Executor thisThread() noexcept;
-  static Executor mainThread() noexcept;
+  static auto thisThread() noexcept -> Executor;
+  static auto mainThread() noexcept -> Executor;
 
 public:
   void post(Work work) noexcept;
@@ -44,9 +45,9 @@ private:
   detail::BaseExecutor *m_impl;
 };
 
-Executor Executor::thisThread() noexcept { return Executor{nullptr}; }
+auto Executor::thisThread() noexcept -> Executor { return Executor{nullptr}; }
 
-Executor Executor::mainThread() noexcept { return Executor{nullptr}; }
+auto Executor::mainThread() noexcept -> Executor { return Executor{nullptr}; }
 
 Executor::Executor(detail::BaseExecutor *impl) : m_impl(impl) {}
 
