@@ -6,7 +6,7 @@ module;
 #include <format>
 #include <iostream>
 
-export module sdv.af:Logging;
+export module sdv.af.log:Logging;
 
 export namespace sdv::af {
 

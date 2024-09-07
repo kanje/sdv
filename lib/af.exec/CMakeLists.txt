@@ -4,10 +4,8 @@
 sdv_add_library(AfCore
   SOURCES
     src/Execution.cc
-    src/Logging.cc
-    src/Module.cc
+    src/Main.cc
 
   TEST_SOURCES
     test/ExecutionTest.cc
-    test/LoggingTest.cc
 )

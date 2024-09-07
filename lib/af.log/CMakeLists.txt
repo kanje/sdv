@@ -1,0 +1,11 @@
+# SDV Ecosystem Playground
+# Copyright (c) 2024 Antons Jeļkins
+
+sdv_add_library(AfLogging
+  SOURCES
+    src/Logging.cc
+    src/Main.cc
+
+  TEST_SOURCES
+    test/LoggingTest.cc
+)

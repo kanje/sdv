@@ -8,7 +8,7 @@ module;
 #include <functional>
 #include <memory>
 
-export module sdv.af:Execution;
+export module sdv.af.exec:Execution;
 
 namespace sdv::af {
 
