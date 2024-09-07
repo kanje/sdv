@@ -1,7 +1,7 @@
 # SDV Ecosystem Playground
 # Copyright (c) 2024 Antons Jeļkins
 
-sdv_add_library(AfLogging
+sdv_add_library(AfLog
   SOURCES
     src/Logging.cc
     src/Main.cc

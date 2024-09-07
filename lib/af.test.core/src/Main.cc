@@ -1,4 +1,6 @@
 // SDV Ecosystem Playground
 // Copyright (c) 2024 Antons Jeļkins
 
-import sdv.af.exec;
+export module sdv.af.test;
+
+export import :TestEngine;

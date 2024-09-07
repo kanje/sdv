@@ -10,6 +10,9 @@ function(sdv_add_library NAME)
           ${_SOURCES}
     )
 
-    add_executable(ut-${NAME} ${_TEST_SOURCES})
-    target_link_libraries(ut-${NAME} ${NAME})
+    if (_TEST_SOURCES)
+        add_executable(ut${NAME} ${_TEST_SOURCES})
+        target_link_libraries(ut${NAME} ${NAME} AfTestGTest)
+        gtest_discover_tests(ut${NAME} TEST_PREFIX ${NAME}.)
+    endif()
 endfunction()

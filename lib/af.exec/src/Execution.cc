@@ -15,7 +15,7 @@ namespace sdv::af {
 export using Work = std::move_only_function<void()>;
 export class Executor;
 
-namespace detail {
+export namespace detail {
 
 class BaseExecutor : boost::noncopyable
 {
