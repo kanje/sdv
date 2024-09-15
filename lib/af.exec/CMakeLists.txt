@@ -3,9 +3,15 @@
 
 sdv_add_library(AfExec
   SOURCES
+    src/Assert.cc
     src/Execution.cc
     src/Main.cc
 
   TEST_SOURCES
     test/ExecutionTest.cc
+)
+
+target_link_libraries(AfExec
+  PUBLIC
+    AfLog
 )

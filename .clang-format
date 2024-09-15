@@ -18,6 +18,7 @@ BraceWrapping:
   SplitEmptyFunction: false
 ColumnLimit: 100
 BreakConstructorInitializers: BeforeComma
+AlwaysBreakTemplateDeclarations: Yes
 IncludeBlocks: Regroup
 IncludeCategories:
   - Regex:           '^".*'

@@ -10,6 +10,9 @@ module;
 
 export module sdv.af.exec:Execution;
 
+import sdv.af.log;
+import :Assert;
+
 namespace sdv::af {
 
 export using Work = std::move_only_function<void()>;
@@ -27,9 +30,95 @@ public:
 class BaseEngine : boost::noncopyable
 {
 public:
-    virtual ~BaseEngine() = default;
+    static int seqNr;
+    static BaseEngine *instance;
+
+public:
+    virtual ~BaseEngine();
     virtual auto executor() noexcept -> std::unique_ptr<BaseExecutor> = 0;
+
+protected:
+    BaseEngine() noexcept;
 };
+
+int BaseEngine::seqNr;
+BaseEngine *BaseEngine::instance;
+
+BaseEngine::BaseEngine() noexcept
+{
+    assert(instance == nullptr, "Another execution engine is already instantiated");
+
+    static int nextSeqNr{1};
+    seqNr = nextSeqNr++;
+    instance = this;
+
+    info("Initialized execution engine (seqNr={})", seqNr);
+}
+
+BaseEngine::~BaseEngine()
+{
+    instance = nullptr;
+    info("Terminated execution engine (seqNr={})", seqNr);
+}
+
+class ThisThreadExecutor
+{
+public:
+    static auto lock() noexcept -> BaseExecutor *;
+
+private:
+    ThisThreadExecutor() noexcept;
+
+private:
+    int m_seqNr;
+    std::unique_ptr<BaseExecutor> m_executor;
+};
+
+ThisThreadExecutor::ThisThreadExecutor() noexcept
+    : m_seqNr(BaseEngine::seqNr)
+    , m_executor(BaseEngine::instance->executor())
+{}
+
+auto ThisThreadExecutor::lock() noexcept -> BaseExecutor *
+{
+    thread_local ThisThreadExecutor self;
+
+    if (BaseEngine::seqNr != self.m_seqNr) [[unlikely]] {
+        self.m_executor.reset();
+        self = ThisThreadExecutor();
+    }
+
+    return self.m_executor.get();
+}
+
+class MainThreadExecutor
+{
+public:
+    static auto lock() noexcept -> BaseExecutor *;
+
+private:
+    MainThreadExecutor() noexcept;
+
+private:
+    int m_seqNr;
+    BaseExecutor *m_executor;
+};
+
+MainThreadExecutor::MainThreadExecutor() noexcept
+    : m_seqNr(BaseEngine::seqNr)
+    , m_executor(ThisThreadExecutor::lock())
+{}
+
+auto MainThreadExecutor::lock() noexcept -> BaseExecutor *
+{
+    static MainThreadExecutor self;
+
+    if (BaseEngine::seqNr != self.m_seqNr) [[unlikely]] {
+        self = MainThreadExecutor();
+    }
+
+    return self.m_executor;
+}
 
 } // namespace detail
 
@@ -38,6 +127,9 @@ class Executor final : boost::noncopyable
 public:
     static auto thisThread() noexcept -> Executor;
     static auto mainThread() noexcept -> Executor;
+
+public:
+    bool operator==(Executor const &rhs) const noexcept;
 
 public:
     void post(Work work) noexcept;
@@ -51,17 +143,21 @@ private:
 
 auto Executor::thisThread() noexcept -> Executor
 {
-    return Executor{nullptr};
+    return Executor{detail::ThisThreadExecutor::lock()};
 }
 
 auto Executor::mainThread() noexcept -> Executor
 {
-    return Executor{nullptr};
+    return Executor{detail::MainThreadExecutor::lock()};
 }
-
 Executor::Executor(detail::BaseExecutor *impl)
     : m_impl(impl)
 {}
+
+bool Executor::operator==(Executor const &rhs) const noexcept
+{
+    return m_impl == rhs.m_impl;
+}
 
 void Executor::post(Work work) noexcept
 {

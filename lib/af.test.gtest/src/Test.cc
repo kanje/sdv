@@ -13,6 +13,8 @@ namespace sdv::af::test::gtest {
 
 export class Test : public ::testing::Test
 {
+private:
+    TestEngine m_engine;
 };
 
 } // namespace sdv::af::test::gtest
