@@ -4,6 +4,7 @@
 sdv_add_library(AfExec
   SOURCES
     src/Assert.cc
+    src/Coroutines.cc
     src/Execution.cc
     src/Main.cc
 
