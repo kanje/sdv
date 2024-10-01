@@ -106,7 +106,7 @@ auto first() -> Async<int>
 {
     info("first(): before co_await");
     int i = co_await second();
-    info("second(): after co_await; i={}", i);
+    info("first(): after co_await; i={}", i);
     co_return i + 2;
 }
 
@@ -165,7 +165,7 @@ second(): after co_await; i=40
 --         Async<2> | ~Async()
 -- ResumeAwaiter<2> | ~ResumeAwaiter()
 --     CoPromise<2> | ~CoPromise()
-second(): after co_await; i=80
+first(): after co_await; i=80
 --     CoPromise<1> | return_value: 82
 --     CoPromise<1> | final_suspend()
 -- ResumeAwaiter<3> | ResumeAwaiter()
