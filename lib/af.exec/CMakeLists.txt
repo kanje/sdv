@@ -2,7 +2,7 @@
 # Copyright (c) 2024 Antons Jeļkins
 
 sdv_add_library(AfExec
-  SOURCES
+  MODULE_SOURCES
     src/Assert.cc
     src/Coroutines.cc
     src/Execution.cc

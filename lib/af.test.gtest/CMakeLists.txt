@@ -4,7 +4,7 @@
 find_package(GTest CONFIG REQUIRED COMPONENTS GTest GMock)
 
 sdv_add_library(AfTestGTest
-  SOURCES
+  MODULE_SOURCES
     src/Main.cc
     src/Test.cc
 

@@ -1,0 +1,65 @@
+// SDV Ecosystem Playground
+// Copyright (c) 2024 Antons Jeļkins
+
+module;
+
+#include <boost/asio.hpp>
+
+#include <memory>
+
+export module sdv.af.exec.asio:Execution;
+
+export import sdv.af.exec;
+
+namespace sdv::af::asio {
+
+class Executor : public detail::BaseExecutor
+{
+public:
+    Executor();
+
+    void post(Work work) noexcept override;
+    void run() override;
+    void stop() override;
+
+private:
+    boost::asio::io_context m_io;
+    boost::asio::executor_work_guard<boost::asio::io_context::executor_type> m_guard;
+};
+
+export class Engine : public detail::BaseEngine
+{
+public:
+    Engine() noexcept;
+
+private:
+    auto executor() noexcept -> std::unique_ptr<detail::BaseExecutor> override;
+};
+
+Executor::Executor()
+    : m_guard(boost::asio::make_work_guard(m_io))
+{}
+
+void Executor::post(Work work) noexcept
+{
+    boost::asio::post(m_io, std::move(work));
+}
+
+void Executor::run()
+{
+    m_io.run();
+}
+
+void Executor::stop()
+{
+    m_guard.reset();
+}
+
+Engine::Engine() noexcept = default;
+
+auto Engine::executor() noexcept -> std::unique_ptr<detail::BaseExecutor>
+{
+    return std::make_unique<Executor>();
+}
+
+} // namespace sdv::af::asio
