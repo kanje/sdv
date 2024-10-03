@@ -1,5 +1,5 @@
 ---
-Checks:          '-*,bugprone*,readability*,readability-identifier-naming,-readability-redundant-access-specifiers,performance*,modernize*,misc*,concurrency*,cppcore*,cert*,clang*'
+Checks:          '-*,bugprone*,readability*,readability-identifier-naming,-readability-redundant-access-specifiers,performance*,modernize*,-modernize-use-nodiscard,misc*,concurrency*,cppcore*,cert*,clang*'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 CheckOptions:
@@ -7,5 +7,6 @@ CheckOptions:
   readability-identifier-naming.ClassCase: 'CamelCase'
   readability-identifier-naming.MemberCase: 'lowerBack'
   readability-identifier-naming.MemberPrefix: 'm_'
+  readability-identifier-naming.PublicMemberPrefix: ''
 SystemHeaders:   false
 ...

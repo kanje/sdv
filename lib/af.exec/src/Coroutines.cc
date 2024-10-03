@@ -3,6 +3,8 @@
 
 module;
 
+#include "detail/Trace.hh"
+
 #include <boost/core/noncopyable.hpp>
 
 #include <coroutine>
@@ -21,31 +23,6 @@ export template<typename T>
 class Async;
 
 namespace detail {
-
-namespace {
-
-std::map<void const *, std::string> map;
-std::map<std::string_view, int> next;
-
-} // namespace
-
-auto mnemo(std::string_view name, void const *ptr) -> std::string_view
-{
-    auto &str = map[ptr];
-    if (str.empty()) {
-        str = std::format("{}<{}>", name, ++next[name]);
-    }
-    return str;
-}
-
-auto mnemo(void const *ptr) -> std::string_view
-{
-    return mnemo("<unknown>", ptr);
-}
-
-#define trace() info("-- {:>16} | {}()", detail::mnemo(this), __FUNCTION__)
-#define tracex(fmt, ...)                                                                           \
-    info("-- {:>16} | {}: " fmt, detail::mnemo(this), __FUNCTION__, ##__VA_ARGS__)
 
 struct ResumeAwaiter;
 
@@ -81,9 +58,9 @@ struct ResumeAwaiter
 template<typename T>
 CoPromise<T>::CoPromise()
 {
-    mnemo(__FUNCTION__, this);
-    tracex("{}",
-           mnemo("co_handle", std::coroutine_handle<CoPromise>::from_promise(*this).address()));
+    trace_ctr("{}",
+              trace_instance().record(
+                  "co_handle", std::coroutine_handle<CoPromise>::from_promise(*this).address()));
 }
 
 template<typename T>
@@ -102,7 +79,7 @@ auto CoPromise<T>::get_return_object() -> Async<T>
 template<typename T>
 auto CoPromise<T>::initial_suspend() -> std::suspend_never
 {
-    tracex("never");
+    trace("never");
     return {};
 }
 
@@ -116,7 +93,7 @@ auto CoPromise<T>::final_suspend() noexcept -> ResumeAwaiter
 template<typename T>
 auto CoPromise<T>::return_value(T v) -> void
 {
-    tracex("{}", v);
+    trace("{}", v);
     value = v;
 }
 
@@ -128,8 +105,7 @@ auto CoPromise<T>::unhandled_exception() -> void
 
 ResumeAwaiter::ResumeAwaiter()
 {
-    mnemo(__FUNCTION__, this);
-    trace();
+    trace_ctr();
 }
 
 ResumeAwaiter::~ResumeAwaiter()
@@ -147,7 +123,7 @@ template<typename T>
 auto ResumeAwaiter::await_suspend(std::coroutine_handle<CoPromise<T>> self)
     -> std::coroutine_handle<>
 {
-    tracex("{}", mnemo(self.address()));
+    trace("{}", trace_alias(self.address()));
     if (auto awaiter = self.promise().awaiter; awaiter) {
         return awaiter;
     }
@@ -186,8 +162,7 @@ template<typename T>
 Async<T>::Async(std::coroutine_handle<promise_type> self)
     : m_self(self)
 {
-    detail::mnemo(__FUNCTION__, this);
-    trace();
+    trace_ctr();
 }
 
 template<typename T>
@@ -207,21 +182,21 @@ auto Async<T>::await_ready() const -> bool
 template<typename T>
 auto Async<T>::await_suspend(std::coroutine_handle<promise_type> awaiter) -> void
 {
-    tracex("{}", detail::mnemo(awaiter.address()));
+    trace("{}", trace_instance().alias(awaiter.address()));
     m_self.promise().awaiter = awaiter;
 }
 
 template<typename T>
 auto Async<T>::await_resume() -> T
 {
-    tracex("{}", m_self.promise().value);
+    trace("{}", m_self.promise().value);
     return m_self.promise().value;
 }
 
 template<typename T>
 auto Async<T>::value() const -> T
 {
-    tracex("{}", m_self.promise().value);
+    trace("{}", m_self.promise().value);
     return m_self.promise().value;
 }
 

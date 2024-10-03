@@ -43,47 +43,11 @@ TEST_F(ExecutionTest, post)
     EXPECT_TRUE(isInvoked);
 }
 
-class Awaitable
+auto delayedValue() -> Future<int>
 {
-public:
-    struct State
-    {
-        int value{0};
-        std::coroutine_handle<> awaiter;
-    };
-
-public:
-    Awaitable(std::shared_ptr<State> state)
-        : m_state(std::move(state))
-    {}
-
-    auto await_ready() const -> bool
-    {
-        return false;
-    }
-
-    auto await_suspend(std::coroutine_handle<> awaiter) -> void
-    {
-        m_state->awaiter = awaiter;
-    }
-
-    auto await_resume() -> int
-    {
-        return m_state->value;
-    }
-
-private:
-    std::shared_ptr<State> m_state;
-};
-
-auto delayedValue() -> Awaitable
-{
-    auto state = std::make_shared<Awaitable::State>();
-    Executor::thisThread().post([state] {
-        state->value = 42;
-        state->awaiter.resume();
-    });
-    return {state};
+    Promise<int> promise;
+    Executor::thisThread().post([promise] { promise.fulfill(42); });
+    return promise.future();
 }
 
 auto third() -> Async<int>
