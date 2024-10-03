@@ -2,7 +2,7 @@
 # Copyright (c) 2024 Antons Jeļkins
 
 sdv_add_library(AfTestCore
-  SOURCES
+  MODULE_SOURCES
     src/Main.cc
     src/Execution.cc
 

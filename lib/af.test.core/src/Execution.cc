@@ -23,6 +23,8 @@ public:
 
 public:
     void post(Work work) noexcept override;
+    void run() override;
+    void stop() override;
 
 public:
     void spin() noexcept;
@@ -47,6 +49,16 @@ TestExecutor::~TestExecutor()
 void TestExecutor::post(Work work) noexcept
 {
     m_work.push_back(std::move(work));
+}
+
+void TestExecutor::run()
+{
+    std::abort();
+}
+
+void TestExecutor::stop()
+{
+    std::abort();
 }
 
 void TestExecutor::spin() noexcept

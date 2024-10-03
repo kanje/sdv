@@ -2,7 +2,7 @@
 # Copyright (c) 2024 Antons Jeļkins
 
 sdv_add_library(AfLog
-  SOURCES
+  MODULE_SOURCES
     src/Logging.cc
     src/Main.cc
 

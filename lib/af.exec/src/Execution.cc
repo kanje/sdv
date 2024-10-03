@@ -25,6 +25,8 @@ class BaseExecutor : boost::noncopyable
 public:
     virtual ~BaseExecutor() = default;
     virtual void post(Work work) noexcept = 0;
+    virtual void run() = 0;
+    virtual void stop() = 0;
 };
 
 class BaseEngine : boost::noncopyable
@@ -133,6 +135,8 @@ public:
 
 public:
     void post(Work work) noexcept;
+    void run();
+    void stop();
 
 private:
     explicit Executor(detail::BaseExecutor *impl);
@@ -162,6 +166,16 @@ bool Executor::operator==(Executor const &rhs) const noexcept
 void Executor::post(Work work) noexcept
 {
     m_impl->post(std::move(work));
+}
+
+void Executor::run()
+{
+    m_impl->run();
+}
+
+void Executor::stop()
+{
+    m_impl->stop();
 }
 
 } // namespace sdv::af
