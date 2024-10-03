@@ -3,6 +3,9 @@
 This is my **playground** around the SDV topic. The aim is to experiment with building blocks
 needed for an SDV ecosystem, focused on its onboard non-safety-critical parts.
 
+This is **NOT** production code. It often covers only a happy path, is not thread-safe, does
+not have documentation etc.
+
 ## Software First
 
 SDV needs to start with software, and not hardware. No "do the same thing we did twenty years
