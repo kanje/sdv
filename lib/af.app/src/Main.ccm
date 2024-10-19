@@ -1,0 +1,8 @@
+// SDV Ecosystem Playground
+// Copyright (c) 2024 Antons Jeļkins
+
+export module sdv.af.app;
+
+export import sdv.af.exec;
+
+export import :Service;

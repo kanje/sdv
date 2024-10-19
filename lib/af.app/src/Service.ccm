@@ -1,0 +1,76 @@
+// SDV Ecosystem Playground
+// Copyright (c) 2024 Antons Jeļkins
+
+module;
+
+#include <coroutine>
+#include <memory>
+
+export module sdv.af.app:Service;
+
+import sdv.af.exec.asio;
+import sdv.af.log;
+
+namespace sdv::af::app {
+
+export class Service
+{
+public:
+    Service();
+
+public:
+    auto run() -> int;
+
+protected:
+    ~Service();
+
+    virtual auto initialize() -> Async<int> = 0;
+
+private:
+    auto runImpl() -> Async<int>;
+
+private:
+    std::unique_ptr<detail::BaseEngine> m_engine;
+};
+
+Service::Service()
+{
+    if (detail::BaseEngine::instance == nullptr) {
+        m_engine = std::make_unique<asio::Engine>();
+    }
+
+    // This effectively marks the current thread as the main one.
+    Executor::mainThread();
+}
+
+Service::~Service() = default;
+
+auto Service::run() -> int
+{
+    auto executor = Executor::thisThread();
+    assert(executor == Executor::mainThread(), "Service can be run only from the main thread");
+
+    std::optional<Async<int>> coro;
+
+    executor.post([this, &coro]() mutable {
+        info("Before runImpl()");
+        coro = runImpl();
+        info("After runImpl()");
+    });
+
+    info("Before running");
+    int rv = executor.run();
+    info("After running: {}", rv);
+    return rv;
+}
+
+auto Service::runImpl() -> Async<int>
+{
+    info("Initializing service");
+    co_await initialize();
+
+    info("Service initialized");
+    co_return 0;
+}
+
+} // namespace sdv::af::app

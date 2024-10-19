@@ -8,11 +8,7 @@ sdv_add_library(AfTestGTest
     src/Main.cc
     src/Test.cc
 
-  TEST_SOURCES
-)
-
-target_link_libraries(AfTestGTest
-  PUBLIC
+  PUBLIC_DEPS
     AfTestCore
     GTest::gmock
     GTest::gtest_main

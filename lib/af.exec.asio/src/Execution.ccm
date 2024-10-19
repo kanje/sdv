@@ -55,7 +55,9 @@ void Executor::stop()
     m_guard.reset();
 }
 
-Engine::Engine() noexcept = default;
+Engine::Engine() noexcept
+    : detail::BaseEngine("ASIO")
+{}
 
 auto Engine::executor() noexcept -> std::unique_ptr<detail::BaseExecutor>
 {

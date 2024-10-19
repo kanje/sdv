@@ -40,13 +40,13 @@ public:
     virtual auto executor() noexcept -> std::unique_ptr<BaseExecutor> = 0;
 
 protected:
-    BaseEngine() noexcept;
+    BaseEngine(std::string_view name) noexcept;
 };
 
 int BaseEngine::seqNr;
 BaseEngine *BaseEngine::instance;
 
-BaseEngine::BaseEngine() noexcept
+BaseEngine::BaseEngine(std::string_view name) noexcept
 {
     assert(instance == nullptr, "Another execution engine is already instantiated");
 
@@ -54,7 +54,7 @@ BaseEngine::BaseEngine() noexcept
     seqNr = nextSeqNr++;
     instance = this;
 
-    info("Initialized execution engine (seqNr={})", seqNr);
+    info("Initialized {} execution engine (seqNr={})", name, seqNr);
 }
 
 BaseEngine::~BaseEngine()
@@ -135,7 +135,7 @@ public:
 
 public:
     void post(Work work) noexcept;
-    void run();
+    int run();
     void stop();
 
 private:
@@ -168,9 +168,10 @@ void Executor::post(Work work) noexcept
     m_impl->post(std::move(work));
 }
 
-void Executor::run()
+int Executor::run()
 {
     m_impl->run();
+    return 0;
 }
 
 void Executor::stop()

@@ -8,6 +8,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+add_compile_options(-Wno-deprecated-declarations -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined)
+add_link_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined)
+
 include(GoogleTest)
 
 include(cmake/Declarative.cmake)

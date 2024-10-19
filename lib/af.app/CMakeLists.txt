@@ -1,14 +1,14 @@
 # SDV Ecosystem Playground
 # Copyright (c) 2024 Antons Jeļkins
 
-sdv_add_library(AfTestCore
+sdv_add_library(AfApp
   MODULE_SOURCES
-    src/Main.cc
-    src/Execution.cc
+    src/Main.ccm
+    src/Service.ccm
 
   TEST_SOURCES
-    test/ExecutionTest.cc
+    test/ServiceTest.cc
 
   PUBLIC_DEPS
-    AfExec
+    AfExecAsio
 )
